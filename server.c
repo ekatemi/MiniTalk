@@ -16,16 +16,30 @@ static void print_pid(pid_t pid)
     ft_putnbr(pid);
 }
 
+void signalHandler(int signum) {
+    // Handle the signal here
+    printf("Signal %d received.\n", signum);
+
+    // You can add more logic here based on the received signal
+}
+
 int main (int argc, char **argv)
 {
     pid_t pid;
+    struct sigaction sa;
+    sa.sa_handler = signalHandler;
+    sa.sa_flags = 0;
+
     pid = getpid();
     // if (pid == -1)
     //     return (1);
 
     print_pid(pid);
-    sigaction()
-    sigaction()
+   
+    if (sigaction(SIGUSR1, &sa, NULL) == 1)
+        printf ("sending 1");
+    else if (sigaction(SIGUSR2, &sa, NULL) == 0)
+        printf ("sending 0");
     while (1)
     {
         sleep(1);// ???
