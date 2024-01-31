@@ -16,16 +16,19 @@ static void print_pid(pid_t pid)
     ft_putnbr(pid);
 }
 
-int main ()
+int main (int argc, char **argv)
 {
     pid_t pid;
     pid = getpid();
-    if (pid == -1)
-        return (1);
+    // if (pid == -1)
+    //     return (1);
+
     print_pid(pid);
+    sigaction()
+    sigaction()
     while (1)
     {
-        sleep(1);
+        sleep(1);// ???
     }
     return(0);
 }
