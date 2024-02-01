@@ -55,7 +55,7 @@ void send_bin(pid_t pid, char c)
         printf("%d", (c & (1 << bit)) ? 1 : 0);
         if (c & (1 << bit))
         {
-            //bit set 1
+            //bit set 1 SIGUSR1 = 30, SIGUSR2 = 31
             kill(pid, SIGUSR1);
         }
         else

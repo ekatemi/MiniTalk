@@ -16,18 +16,35 @@ static void print_pid(pid_t pid)
     ft_putnbr(pid);
 }
 
-void signalHandler(int signum) {
-    // Handle the signal here
-    printf("Signal %d received.\n", signum);
+void	ft_handler(int signal)
+{
+	static int	bit;
+	static int	i;
+    i = 0;
 
-    // You can add more logic here based on the received signal
+	if (signal == SIGUSR1)
+    {
+        i = (i << 1) | 1;
+    }
+    else if (signal == SIGUSR2)
+    {
+        i = (i << 1) | 0;
+    }
+	bit++;
+    
+	if (bit == 8)
+	{
+		write(1, &i, 1);
+		bit = 0;
+		i = 0;
+	}
 }
 
-int main (int argc, char **argv)
+int main ()
 {
     pid_t pid;
     struct sigaction sa;
-    sa.sa_handler = signalHandler;
+    sa.sa_handler = ft_handler;
     sa.sa_flags = 0;
 
     pid = getpid();
@@ -35,11 +52,12 @@ int main (int argc, char **argv)
     //     return (1);
 
     print_pid(pid);
-   
-    if (sigaction(SIGUSR1, &sa, NULL) == 1)
-        printf ("sending 1");
-    else if (sigaction(SIGUSR2, &sa, NULL) == 0)
-        printf ("sending 0");
+    sigaction(SIGUSR1, &sa, NULL);
+    sigaction(SIGUSR2, &sa, NULL);
+    // if (sigaction(SIGUSR1, &sa, NULL) == 1)
+    //     printf ("sending 1");
+    // else if (sigaction(SIGUSR2, &sa, NULL) == 0)
+    //     printf ("sending 0");
     while (1)
     {
         sleep(1);// ???
