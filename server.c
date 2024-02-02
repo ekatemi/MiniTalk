@@ -2,65 +2,54 @@
 #include <stdio.h>
 #include <unistd.h>
 
-static void ft_putnbr(pid_t pid)
-{
-    char idx[10] = "0123456789";
-    if (pid > 9)
-        ft_putnbr(pid / 10);
-    write (1, &idx[pid % 10], 1);
-}
+// static void ft_putnbr(pid_t pid)
+// {
+//     char idx[10] = "0123456789";
+//     if (pid > 9)
+//         ft_putnbr(pid / 10);
+//     write (1, &idx[pid % 10], 1);
+// }
 
-static void print_pid(pid_t pid)
-{
-    write (1, "The PID is : ", 13);
-    ft_putnbr(pid);
-}
+// static void print_pid(pid_t pid)
+// {
+//     write (1, "The PID is : ", 13);
+//     ft_putnbr(pid);
+//     write (1, "\n", 1);
+// }
 
 void	ft_handler(int signal)
 {
 	static int	bit;
 	static int	i;
-    i = 0;
 
 	if (signal == SIGUSR1)
-    {
-        i = (i << 1) | 1;
-    }
-    else if (signal == SIGUSR2)
-    {
-        i = (i << 1) | 0;
-    }
+		i = i | (1 << bit);
 	bit++;
-    
 	if (bit == 8)
 	{
-		write(1, &i, 1);
+		printf("%c", i);
 		bit = 0;
 		i = 0;
 	}
 }
 
-int main ()
+int	main(int argc, char **argv)
 {
-    pid_t pid;
+	int	pid;
+
+	(void)argv;
+	
+	pid = getpid();
     struct sigaction sa;
     sa.sa_handler = ft_handler;
     sa.sa_flags = 0;
-
-    pid = getpid();
-    // if (pid == -1)
-    //     return (1);
-
-    print_pid(pid);
-    sigaction(SIGUSR1, &sa, NULL);
-    sigaction(SIGUSR2, &sa, NULL);
-    // if (sigaction(SIGUSR1, &sa, NULL) == 1)
-    //     printf ("sending 1");
-    // else if (sigaction(SIGUSR2, &sa, NULL) == 0)
-    //     printf ("sending 0");
-    while (1)
-    {
-        sleep(1);// ???
-    }
-    return(0);
+	printf("PID -> %d\n", pid);
+	printf("Waiting for a message...\n");
+	while (argc == 1)
+	{
+		sigaction(SIGUSR1, &sa, NULL);
+		sigaction(SIGUSR2, &sa, NULL);
+		pause ();
+	}
+	return (0);
 }

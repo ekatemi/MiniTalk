@@ -33,60 +33,50 @@ int	ft_atoi(const char *nptr)
 	return (res);
 }
 
-void send_bin(pid_t pid, char c)
+void	ft_send_bits(int pid, char i)
 {
-    int bit;
+	int	bit;
 
-    bit = 7;
-    printf("Sending character: %c (ASCII: %d, Binary: ", c, c);
-    //ASCII 0 - 127 char in dec
-    //127 is 01111111
-    // 1       0000 0001
-    // 1 << 6  0100 0000
-    // 1 << 5  0010 0000
-    // 1 << 4  0001 0000
-    // 1 << 3  0000 1000
-    // 1 << 2  0000 0100
-    // 1 << 1  0000 0010
-    // 1 << 0  0000 0001
-
-    while (--bit >= 0)
-    {
-        printf("%d", (c & (1 << bit)) ? 1 : 0);
-        if (c & (1 << bit))
-        {
-            //bit set 1 SIGUSR1 = 30, SIGUSR2 = 31
-            kill(pid, SIGUSR1);
-        }
-        else
-            //bit set 0
-            kill(pid, SIGUSR2);
-    }
-    printf(")\n");
-
+	bit = 0;
+	while (bit < 8)
+	{
+		if ((i & (1 << bit)) != 0)
+			kill(pid, SIGUSR1);
+		else
+			kill(pid, SIGUSR2);
+		usleep(100);
+		bit++;
+	}
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-    char *str;
-    //pid is 32-bit signed integer
-    pid_t pid;
+	int	pid;
+	//int	i;
 
-    if (argc < 3)
-    {
-        write(1, "Enter PID number and the message\n", 33);
-    }
-    else if (argc == 3)
-    {
-        pid = ft_atoi(argv[1]);
-        str = argv[2];
-        while (*str)
+	//i = 0;
+    int j = 0;
+	if (argc >= 3)
+	{
+		pid = ft_atoi(argv[1]);
+		while (argv[j])
         {
-            send_bin(pid, *str);
-            str++;
+           int i = 0;
+           while (argv[j][i])
+           {
+			    ft_send_bits(pid, argv[2][i]);
+			    i++;
+		    } 
+            j++;
         }
-        printf("Sending null character (ASCII: %d, Binary: 00000000)\n", '\0');
-        send_bin(pid, '\0');
-    }
-    return (0);
+		
+		ft_send_bits(pid, '\n');
+	}
+	else
+	{
+		printf("Error: wrong format.\n");
+		printf("Try: ./client <PID> <MESSAGE>\n");
+		return (1);
+	}
+	return (0);
 }
