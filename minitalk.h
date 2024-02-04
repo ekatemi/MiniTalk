@@ -7,6 +7,7 @@
 #include <stdlib.h>
 
 void	error_sigaction(void);
+void	error_kill(void);
 void    ft_putnbr_fd(int n, int fd);
 void    ft_putendl_fd(char *str, int fd);
 void    ft_putstr_fd(char *str, int fd);

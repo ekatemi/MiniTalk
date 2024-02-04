@@ -8,9 +8,15 @@ void	ft_send_bits(int pid, char c)
 	while (bit < 8)
 	{
 		if ((c & (1 << bit)) != 0)
-			kill(pid, SIGUSR1);
+		{
+			if(kill(pid, SIGUSR1) != 0)
+				error_kill();
+		}
 		else
-			kill(pid, SIGUSR2);
+		{
+			if(kill(pid, SIGUSR2) != 0)
+				error_kill();
+		}
 		bit++;
 		usleep(100);
 	}

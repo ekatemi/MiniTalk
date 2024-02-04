@@ -1,21 +1,5 @@
 #include "minitalk.h"
 
-void	ft_send_bits(int pid, char i)
-{
-	int	bit;
-
-	bit = 0;
-	while (bit < 8)
-	{
-		if ((i & (1 << bit)) != 0)
-			kill(pid, SIGUSR1);
-		else
-			kill(pid, SIGUSR2);
-		usleep(100);
-		bit++;
-	}
-}
-
 void	ft_handler(int signal, siginfo_t *info, void *context)
 {
 	static int	bit;

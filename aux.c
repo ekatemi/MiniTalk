@@ -68,3 +68,9 @@ void	error_sigaction(void)
 	ft_putendl_fd("Error with the server\n", STDERR_FILENO);
 	exit(EXIT_FAILURE);
 }
+
+void	error_kill(void)
+{
+	ft_putendl_fd("Error sending signal", STDERR_FILENO);
+	exit(EXIT_FAILURE);
+}
