@@ -1,82 +1,60 @@
-///send signal converting every char in binary and sending bit by bit
-#include <unistd.h>
-#include <signal.h>
-#include <stdio.h>
+#include "minitalk.h"
 
-static int	ft_isspace(char c)
-{
-	return (c == '\t' || c == '\n' || c == '\v' || c == '\f'
-		|| c == '\r' || c == ' ');
-}
-
-int	ft_atoi(const char *nptr)
-{
-	int	sign;
-	int	res;
-
-	sign = 1;
-	res = 0;
-	while (*nptr && ft_isspace(*nptr))
-		nptr++;
-	if (*nptr == '+' || *nptr == '-')
-	{
-		if (*nptr == '-')
-			sign = -1;
-		nptr++;
-	}
-	while (*nptr >= '0' && *nptr <= '9')
-	{
-		res = res * 10 + (*nptr - '0');
-		nptr++;
-	}
-	res = res * sign;
-	return (res);
-}
-
-void	ft_send_bits(int pid, char i)
+void	ft_send_bits(int pid, char c)
 {
 	int	bit;
 
 	bit = 0;
 	while (bit < 8)
 	{
-		if ((i & (1 << bit)) != 0)
+		if ((c & (1 << bit)) != 0)
 			kill(pid, SIGUSR1);
 		else
 			kill(pid, SIGUSR2);
-		usleep(100);
 		bit++;
+		usleep(100);
 	}
+}
+
+void	ft_confirm(int sig)
+{
+	if (sig == SIGUSR2)
+		ft_putendl_fd("Message correctly received!", STDOUT_FILENO);
+	exit(EXIT_SUCCESS);
 }
 
 int	main(int argc, char **argv)
 {
 	int	pid;
-	//int	i;
+	int	i;
+	i = 0;
+	struct sigaction sa;
+    sa.sa_handler = ft_confirm;
+    sa.sa_flags = 0;
 
-	//i = 0;
-    int j = 0;
-	if (argc >= 3)
+    // Set up the signal handler for SIGUSR1
+    if (sigaction(SIGUSR2, &sa, NULL) == -1) 
+        error_sigaction();
+	if (argc == 3)
 	{
 		pid = ft_atoi(argv[1]);
-		while (argv[j])
+		if (kill(pid, 0) != 0)
+			{
+				write(2, "Wrong pid\n", 11);
+				return (0);
+			}
+		while (argv[2][i])
         {
-           int i = 0;
-           while (argv[j][i])
-           {
-			    ft_send_bits(pid, argv[2][i]);
-			    i++;
-		    } 
-            j++;
+			ft_send_bits(pid, argv[2][i]);
+			i++;
         }
-		
-		ft_send_bits(pid, '\n');
+		ft_send_bits(pid, '\0');
 	}
 	else
 	{
-		printf("Error: wrong format.\n");
-		printf("Try: ./client <PID> <MESSAGE>\n");
-		return (1);
+		ft_putendl_fd("Error: wrong format.", STDERR_FILENO);
+		ft_putendl_fd("Try: ./client <PID> \"MESSAGE\"", STDERR_FILENO);
+		exit(EXIT_FAILURE);
 	}
 	return (0);
 }
