@@ -48,7 +48,7 @@ int	main(int argc, char **argv)
 	pid = getpid();
     if (argc != 1)
 	{
-		ft_putendl_fd("Wrong format, no arguments here", STDERR_FILENO);
+		ft_putendl_fd("\033[31mWrong format, no arguments here\033[0m", STDERR_FILENO);
 		ft_putendl_fd("Try: ./server", STDERR_FILENO);
 		exit(EXIT_FAILURE);
 	}
@@ -60,7 +60,7 @@ int	main(int argc, char **argv)
 	ft_putstr_fd("PID -> ", STDOUT_FILENO);
 	ft_putnbr_fd(pid, STDOUT_FILENO);
 	write(1, "\n", 1);
-	ft_putendl_fd("Waiting for a message...", STDOUT_FILENO);
+	ft_putendl_fd("\033[32mWaiting for a message...\033[0m", STDOUT_FILENO);
 	if (sigaction(SIGUSR1, &sa, NULL) == -1 || sigaction(SIGUSR2, &sa, NULL) == -1)
 		error_sigaction();
 	while(1)

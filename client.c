@@ -19,7 +19,7 @@ void	ft_send_bits(int pid, char c)
 void	ft_confirm(int sig)
 {
 	if (sig == SIGUSR2)
-		ft_putendl_fd("Message correctly received!", STDOUT_FILENO);
+		ft_putendl_fd("\033[32mMessage received!\033[0m", STDOUT_FILENO);
 	exit(EXIT_SUCCESS);
 }
 
@@ -40,7 +40,7 @@ int	main(int argc, char **argv)
 		pid = ft_atoi(argv[1]);
 		if (kill(pid, 0) != 0)
 			{
-				write(2, "Wrong pid\n", 11);
+				ft_putendl_fd("\033[31mWrong pid\033[0m", STDERR_FILENO);
 				return (0);
 			}
 		while (argv[2][i])
